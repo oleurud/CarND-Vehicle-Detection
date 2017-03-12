@@ -93,6 +93,8 @@ As you can see in the last image, I have multiple detections for each vehicle as
 ####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
 Here's a [link to my video result](./project_video_result.mp4)
 
+And a [link to a video combining P4 and P5](./project_video_result_4an5.mp4)
+
 
 ####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
@@ -124,6 +126,8 @@ In the last image, now I have not any false positive, but I lost one of the cars
 How I have explained, I lose some detections in the process of the false positives deletion. I tried to play with diferent configurations of the slidding windows, but I have not a good result. For a while, I lose the white car when the black appears. 
 
 At the end of the video, I detects cars of the other lane, I not sure if is a error... But has bad solution If I only works thinking in the car recognition. A solution will be to detect the lanes and not detect the cars outside of some lanes playing with the width of the slidding windows.
+
+One idea to optimize the project is to create specific slide windows for each size. For example, for bigger vehicles (nearest) the slide windows must be at the bottom, and for smaller at the top.
 
 As always, the code is a good starting point, but is impossible to use in real time. I have improved the time process as you can see in the method `find` of the class VehicleDetector in the file `detection.py` with the general idea of not process each frame if the previous result was good.
 
