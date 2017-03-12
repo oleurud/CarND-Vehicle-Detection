@@ -81,7 +81,7 @@ def extract_features(imgs, color_space='YCrCb', hog_channel='ALL',
             hist_features = color_hist(feature_image, nbins=hist_bins)
             file_features.append(hist_features)
         if hog_feat == True:
-        # Call get_hog_features() with vis=False, feature_vec=True
+            # Call get_hog_features() with vis=False, feature_vec=True
             if hog_channel == 'ALL':
                 hog_features = []
                 for channel in range(feature_image.shape[2]):

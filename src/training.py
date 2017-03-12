@@ -10,6 +10,13 @@ from . import lesson_functions
 
 
 def read_images():
+    """
+    Read the training images 
+    Returns the images splited between cars and not cars
+
+    This test images are downloaded from the  GTI vehicle image database
+    http://www.gti.ssr.upm.es/data/Vehicle_database.html
+    """
     # Read in car and non-car images
     images = glob.glob('images/**/**/*.png')
     cars = []
@@ -28,6 +35,11 @@ def read_images():
 
 
 def training():
+    """
+    Training Linear SVC
+    Returns the trained Linear SVC and a trained StandardScaler 
+    """
+
     dir = os.path.dirname(__file__)
     trainingFilePath =  dir + "/../training.p"
 

@@ -6,6 +6,10 @@ from moviepy.editor import VideoFileClip
 from src import training, detection
 
 def runTest():
+    """
+    Test the code with the test images
+    """
+
     # Import test images
     testImagesPath = 'test_images/'
     images = os.listdir(testImagesPath)
@@ -13,7 +17,7 @@ def runTest():
     for imageName in images:
         # vehicle detector
         vehicle_detector = detection.VehicleDetector(svc, X_scaler)
-        vehicle_detector.set_frames_skiped(0)
+        vehicle_detector.set_max_frames_skiped(0)
 
         print('image: ' + imageName)
         image = mpimg.imread(testImagesPath + imageName)
@@ -23,6 +27,10 @@ def runTest():
 
 
 def runVideo(test = False):
+    """
+    Run the code using the videos
+    """
+    
     if test:
         output_file = './test_video_result.mp4'
         input_file = './test_video.mp4'
@@ -33,7 +41,7 @@ def runVideo(test = False):
 
     # vehicle detector
     vehicle_detector = detection.VehicleDetector(svc, X_scaler)
-    vehicle_detector.set_frames_skiped(3)
+    vehicle_detector.set_max_frames_skiped(5)
 
     clip = VideoFileClip(input_file)
     out_clip = clip.fl_image(vehicle_detector.find)
@@ -44,5 +52,6 @@ def runVideo(test = False):
 # training
 svc, X_scaler = training.training()
 
-runVideo(True)
+runVideo()
 #runTest()
+

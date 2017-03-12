@@ -5,10 +5,15 @@ from src import lesson_functions
 
 
 class VehicleDetector:
+    """
+    Detects vehicles in images 
+    Uses a trained Linear SVC and a trained StandardScaler 
+    """
     def __init__(self, svc, X_scaler):
         self.last_labels = False
-        self.skip_frames = 3
+        self.max_frames_skiped = 3
         self.frames_skiped = 0
+        self.cars_detected_history = []
 
         self.ystart = 400
         self.ystop = 656
@@ -17,21 +22,39 @@ class VehicleDetector:
         self.cell_per_block = 2
         self.spatial_size = (32, 32)
         self.hist_bins = 32
-        self.scales = [1, 1.5, 2.5, 3.5, 4.5, 5.5]
+        self.scales = [1, 1.25, 1.5, 1.75, 2]
 
         self.svc = svc
         self.X_scaler = X_scaler
 
-    def set_frames_skiped(self, frames_skiped):
-        self.frames_skiped = frames_skiped
+    def set_max_frames_skiped(self, max_frames_skiped):
+        """
+        Set the maximum frames to skip in the detection process
+        """
+        self.max_frames_skiped = max_frames_skiped
 
     def find(self, img):
+        """
+        Starts the detection process.
+        Return the image with the vehicles detected (with a draw rectangle)
+
+        Do the search when:
+        - each max_frames_skiped frames (to increase speed)
+        - if the last_labels is False (the first time)
+        - if the last results are not equals
+
+        If no one of this conditions happens, the functions returns the image
+        with the vehicles detected in the last valid search
+        """
         draw_img = np.copy(img)
 
-        if self.last_labels is False or self.frames_skiped >= self.skip_frames:
+        if (self.last_labels is False 
+            or self.frames_skiped >= self.max_frames_skiped 
+            or self.validateHistory() is False):
+
             self.frames_skiped = 0
 
-            # create tmp
+            # create heatmap
             heatmap = np.zeros_like(img[:, :, 0]).astype(np.float)
 
             # find cars
@@ -52,16 +75,49 @@ class VehicleDetector:
             heatmap = self.create_heatmap(heatmap, bounding_boxes)
             heatmap = self.apply_threshold(heatmap, 2)
             self.last_labels = label(heatmap)
+            self.addToHistory()
 
         else:
             self.frames_skiped += 1
 
         return self.draw_labeled_bboxes(draw_img)
 
+    def addToHistory(self):
+        """
+        Add the last numbers of cars detected into cars_detected_history
+        Only save the 5 last detections number
+        """
+        self.cars_detected_history.append(self.last_labels[1])
+        self.cars_detected_history = self.cars_detected_history[-5:]
 
-    # Define a single function that can extract features using hog sub-sampling and make predictions
+
+    def validateHistory(self):
+        """
+        Check the last results
+        If all  of them are equals, returns True
+        If not, returns False
+        """
+        if(len(self.cars_detected_history) == 5):
+            areEquals = True
+            tmpValue = False
+            for cars in self.cars_detected_history:
+                if(tmpValue is False):
+                    tmpValue = cars
+                elif(tmpValue is not cars):
+                    return False
+
+        return True
+
+
     def find_cars(self, img, ystart, ystop, scales, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins):
+        """
+        Do the real search of the vehicles in the image.
+        Returns the positions of the vehicules detected. 
+        This result can have multiple detections for the same vehicle.
 
+        Looks for cars inside the positions between ystart and ystop and full width
+        The process is repeated for each scale (with different scales we looks for diferent vehicles sizes)
+        """
         img = img.astype(np.float32)/255
 
         img_tosearch = img[ystart:ystop, :, :]
@@ -128,6 +184,10 @@ class VehicleDetector:
 
 
     def create_heatmap(self, heatmap, bbox_list):
+        """
+        Adds 1 to the pixels inside each box of a list of boxes
+        The boxes are the vehicle detection rectangle
+        """
         for box in bbox_list:
             # Add += 1 for all pixels inside each bbox
             # Assuming each "box" takes the form ((x1, y1), (x2, y2))
@@ -138,6 +198,9 @@ class VehicleDetector:
 
 
     def apply_threshold(self, heatmap, threshold):
+        """
+        Filter the pixels below the threshold setting them to zero
+        """
         # Zero out pixels below the threshold
         heatmap[heatmap <= threshold] = 0
         # Return thresholded map
@@ -145,6 +208,9 @@ class VehicleDetector:
 
 
     def draw_labeled_bboxes(self, img):
+        """
+        Draw a bounding rectagle around the vehicles positions
+        """
         # Iterate through all detected cars
         for car_number in range(1, self.last_labels[1]+1):
             # Find pixels with each car_number label value
