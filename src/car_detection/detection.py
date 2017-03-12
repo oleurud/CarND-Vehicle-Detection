@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 from scipy.ndimage.measurements import label
-from src import lesson_functions
+from . import lesson_functions
 
 
 class VehicleDetector:

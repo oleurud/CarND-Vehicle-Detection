@@ -41,7 +41,7 @@ def training():
     """
 
     dir = os.path.dirname(__file__)
-    trainingFilePath =  dir + "/../training.p"
+    trainingFilePath =  dir + "/../../training.p"
 
     if os.path.isfile(trainingFilePath) is False:
         t = time.time()
