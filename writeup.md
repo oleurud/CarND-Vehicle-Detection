@@ -25,6 +25,15 @@ The goals / steps of this project are the following:
 
 You're reading it!
 
+###Code structure
+
+The app starts in the `main.py` file. This uses the files on `src` folder:
+
+- `training.py`: with the methods of the training process
+- `detection.py`: with the class VehicleDetector to detect de vehicles
+- `lesson_functions.py`: with the method from the class used by `training.py` and `detection.py`
+
+
 ###Histogram of Oriented Gradients (HOG)
 
 ####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
