@@ -121,7 +121,9 @@ In the last image, now I have not any false positive, but I lost one of the cars
 
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-How I have explained, I lose some detections in the process of the false positives deletion. I tried to play with diferent configurations of the slidding windows, but I have not a google result.
+How I have explained, I lose some detections in the process of the false positives deletion. I tried to play with diferent configurations of the slidding windows, but I have not a good result. For a while, I lose the white car when the black appears. 
+
+At the end of the video, I detects cars of the other lane, I not sure if is a error... But has bad solution If I only works thinking in the car recognition. A solution will be to detect the lanes and not detect the cars outside of some lanes playing with the width of the slidding windows.
 
 As always, the code is a good starting point, but is impossible to use in real time. I have improved the time process as you can see in the method `find` of the class VehicleDetector in the file `detection.py` with the general idea of not process each frame if the previous result was good.
 
